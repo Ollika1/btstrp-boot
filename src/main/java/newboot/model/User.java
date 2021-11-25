@@ -18,18 +18,19 @@ public class User implements UserDetails {
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email; // уникальное значение
 
-    @Column(unique = true, nullable = false)
-    private String name; // уникальное значение
-
+    @Column( nullable = false)
+    private String name;
+    @Column(name = "lastname")
+    private String lastName;
     @Column
     private String password;
 
-    @Column(name = "lastname")
-    private String lastName;
+    @Column
+    private int age;
 
-    @Column(name = "email")
-    private String email;
     @ManyToMany (cascade = { CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -39,14 +40,14 @@ public class User implements UserDetails {
     private Set<Role> roles= new HashSet<>();
 
     @Transient
-    private Set<String> set;
+    private String roleString;
 
-    public Set<String> getSet() {
-        return set;
+    public String getRoleString() {
+        return roleString;
     }
 
-    public void setSet(Set<String> set) {
-        this.set = set;
+    public void setRoleString(String roleString) {
+        this.roleString = roleString;
     }
 
     public User() {
@@ -110,9 +111,28 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     @Override
     public String getPassword() {
         return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -140,15 +160,5 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 }

@@ -13,7 +13,7 @@
 
 <div>
     <nobr>
-        <a th:href="@{/admin/people/new}">Create new person</a>
+        <a th:href="@{/admin/new}">Create new person</a>
     </nobr>
 </div>
 
@@ -35,8 +35,8 @@
             <td><a th:href="@{/admin/people/{id}(id=${contact.id})}" th:utext="${contact.lastName}">...</a></td>
             <td th:utext="${contact.email}">...</td>
             <td th:utext="${contact.password}">...</td>
-            <td><a th:href="@{/admin/people/{id}/edit(id=${contact.id})}">Edit</a></td>
-            <td> <form th:method="DELETE" th:action="@{/admin/people/{id}(id=${contact.id})}">
+            <td><a th:href="@{/admin/{id}/edit(id=${contact.id})}">Edit</a></td>
+            <td> <form th:method="DELETE" th:action="@{/admin/{id}(id=${contact.id})}">
                 <input type="submit" value="Delete"/>
             </form></td>
         </tr>

@@ -1,6 +1,7 @@
 package newboot.service;
 
 
+import newboot.model.Role;
 import newboot.model.User;
 
 
@@ -12,4 +13,6 @@ public interface UserService {
     void delete(Long id);
     void edit(Long id, User user);
     User getById(Long id);
+
+    List<Role> getAllRoles();
 }

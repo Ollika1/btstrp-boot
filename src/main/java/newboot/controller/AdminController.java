@@ -4,50 +4,55 @@ import newboot.model.User;
 import newboot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/people")
+@RequestMapping("/admin")
 public class AdminController {
 
     @Autowired
     private UserService userService;
 
     @GetMapping()
-    public String home(Model model){
+    public String adminHome(ModelMap model){
         model.addAttribute("list",userService.getAllUsers());
-        return "home";
+        model.addAttribute("allRoles", userService.getAllRoles());
+        model.addAttribute("newUser", new User());
+        return "admin";
     }
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") Long id, Model model){
-        model.addAttribute("person", userService.getById(id));
-        return "show";
-    }
-    @GetMapping("/new")
-    public String newPerson(Model model){
-        model.addAttribute("person", new User());
-        return "new";
-    }
-    @PostMapping()
-    public String create(@ModelAttribute("person") User user){
+
+    @PostMapping("")
+    public String create(@ModelAttribute("addUser") User user){
         userService.save(user);
-        return "redirect:/admin/people";
+        return "redirect:/admin/";
     }
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") Long id){
-        model.addAttribute("person",userService.getById(id));
-        return "edit";
-    }
+
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("person") User user, @PathVariable("id") Long id){
+    public String update(@ModelAttribute("user") User user, @PathVariable("id") Long id){
         userService.edit(id, user);
-        return "redirect:/admin/people";
+        return "redirect:/admin";
     }
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Long id){
         userService.delete(id);
-        return "redirect:/admin/people";
+        return "redirect:/admin";
     }
+
+//    @GetMapping("/{id}")
+//    public String show(@PathVariable("id") Long id, Model model){
+//        model.addAttribute("person", userService.getById(id));
+//        return "show";
+//    }
+//    @GetMapping("/new")
+//    public String newPerson(Model model){
+//        model.addAttribute("person", new User());
+//        return "new";
+//    }
+//    @GetMapping("/{id}/edit")
+//    public String edit(Model model, @PathVariable("id") Long id){
+//        model.addAttribute("user",userService.getById(id));
+//        return "edit";
+//    }
 
 }

@@ -48,7 +48,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // указываем action с формы логина
                 .loginProcessingUrl("/login")
                 // Указываем параметры логина и пароля с формы логина
-                .usernameParameter("j_username")
+//                .usernameParameter("j_username")
+//                .passwordParameter("j_password")
+                .usernameParameter("j_email")
                 .passwordParameter("j_password")
                 // даем доступ к форме логина всем
                 .permitAll();

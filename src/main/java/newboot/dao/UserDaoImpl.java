@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Repository
@@ -24,7 +21,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByName(String name) throws UsernameNotFoundException{
-        String s = "SELECT u FROM User u WHERE u.name = :username";
+        String s = "SELECT u FROM User u WHERE u.email = :username";
         Query query =  session.createQuery(s);
         query.setParameter("username", name);
         User user = (User) query.getSingleResult();
@@ -40,18 +37,25 @@ public class UserDaoImpl implements UserDao {
         TypedQuery<User> query= session.createQuery("select a from User a");
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Role> getAllRoles() {
+        TypedQuery<Role> query= session.createQuery("select a from Role a");
+        return query.getResultList();
+    }
     @Override
     public void save(User user) {
         User userNew = new User();
         userNew.setName(user.getName());
         userNew.setLastName(user.getLastName());
         userNew.setEmail(user.getEmail());
+        userNew.setAge(user.getAge());
         Set<Role> roles= new HashSet<>();
-        Optional<String> roleString = user.getSet().stream().findFirst();
-        if ((roleString.get().contains("ADMIN"))) {
-            roles.add(session.get(Role.class, 2L));
-        } else {
+        Optional<String> roleString = Optional.ofNullable(user.getRoleString());
+        if ((roleString.isEmpty())||roleString.get().contains("USER")){
             roles.add(session.get(Role.class, 1L));
+        } else {
+            roles.add(session.get(Role.class, 2L));
         }
         userNew.setRoles(roles);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
@@ -69,26 +73,25 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void edit(Long id,User user) {
         User userEdited = session.get(User.class, id);
-        Set<Role> roles = userEdited.getRoles();
-        Optional<Role> roleAdmin = roles.stream().filter(s -> s.getRole().contains("ADMIN")).findAny();
-        if (user.getSet().stream().findFirst().get().contains("USER")){
-            if (roleAdmin.isPresent()){
-                roles.clear();
-                roles.add(session.get(Role.class, 1L));
-            }
-        } else {
-            if(roleAdmin.isEmpty()){
-                roles.add(session.get(Role.class, 2L));
-            }
-        }
-        userEdited.setRoles(roles);
         userEdited.setName(user.getName());
         userEdited.setLastName(user.getLastName());
         userEdited.setEmail(user.getEmail());
+        userEdited.setAge(user.getAge());
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
         String pass = bCryptPasswordEncoder.encode(user.getPassword());
         userEdited.setPassword(pass);
-
+        Set<Role> roles = new HashSet<>();
+        Optional<String> roleString = Optional.ofNullable(user.getRoleString());
+        if (roleString.isPresent()){
+            if ((roleString.get().contains("ADMIN"))) {
+                roles.add(session.get(Role.class, 2L));
+            } else {
+                roles.add(session.get(Role.class, 1L));
+            }
+        } else {
+            roles = userEdited.getRoles();
+        }
+        userEdited.setRoles(roles);
     }
 
     @Override

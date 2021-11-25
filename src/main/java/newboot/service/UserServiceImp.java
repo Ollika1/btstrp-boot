@@ -1,6 +1,7 @@
 package newboot.service;
 
 import newboot.dao.UserDaoImpl;
+import newboot.model.Role;
 import newboot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,11 @@ public class UserServiceImp implements UserService{
     @Override
     public User getById(Long id) {
         return userDaoImp.getById(id);
+    }
+
+    @Override
+    @Transactional
+    public List<Role> getAllRoles() {
+        return userDaoImp.getAllRoles();
     }
 }
