@@ -51,11 +51,16 @@ public class UserDaoImpl implements UserDao {
         userNew.setEmail(user.getEmail());
         userNew.setAge(user.getAge());
         Set<Role> roles= new HashSet<>();
-        Optional<String> roleString = Optional.ofNullable(user.getRoleString());
-        if ((roleString.isEmpty())||roleString.get().contains("USER")){
+        String[] roleString = user.getRoleString();
+        if (roleString.length==2){
             roles.add(session.get(Role.class, 1L));
-        } else {
             roles.add(session.get(Role.class, 2L));
+        } else {
+            if (roleString[0].contains("USER")){
+                roles.add(session.get(Role.class, 1L));
+            } else {
+                roles.add(session.get(Role.class, 2L));
+            }
         }
         userNew.setRoles(roles);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
@@ -81,15 +86,16 @@ public class UserDaoImpl implements UserDao {
         String pass = bCryptPasswordEncoder.encode(user.getPassword());
         userEdited.setPassword(pass);
         Set<Role> roles = new HashSet<>();
-        Optional<String> roleString = Optional.ofNullable(user.getRoleString());
-        if (roleString.isPresent()){
-            if ((roleString.get().contains("ADMIN"))) {
+        String[] roleString = user.getRoleString();
+        if (roleString.length==2){
+            roles.add(session.get(Role.class, 1L));
+            roles.add(session.get(Role.class, 2L));
+        } else {
+            if (roleString[0].contains("ADMIN")) {
                 roles.add(session.get(Role.class, 2L));
             } else {
                 roles.add(session.get(Role.class, 1L));
             }
-        } else {
-            roles = userEdited.getRoles();
         }
         userEdited.setRoles(roles);
     }

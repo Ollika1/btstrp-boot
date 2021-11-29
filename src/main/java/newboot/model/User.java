@@ -40,13 +40,13 @@ public class User implements UserDetails {
     private Set<Role> roles= new HashSet<>();
 
     @Transient
-    private String roleString;
+    private String [] roleString;
 
-    public String getRoleString() {
+    public String[] getRoleString() {
         return roleString;
     }
 
-    public void setRoleString(String roleString) {
+    public void setRoleString(String[] roleString) {
         this.roleString = roleString;
     }
 
